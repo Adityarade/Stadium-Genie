@@ -1,36 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-let db;
-(async () => {
-  db = await open({
-    filename: process.env.NODE_ENV === 'production' ? '/tmp/database.sqlite' : './database.sqlite',
-    driver: sqlite3.Database
-  });
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS incidents (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-      notes TEXT,
-      report TEXT
-    );
-    CREATE TABLE IF NOT EXISTS announcements (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-      english TEXT,
-      spanish TEXT,
-      french TEXT
-    );
-  `);
-  console.log("✅ SQLite Database connected.");
-})();
+let announcementsDB = [];
+console.log("✅ Using in-memory array for database (Vercel compatible).");
 
 // Initialize Gemini Client safely
 let ai = null;
@@ -121,9 +98,7 @@ app.get('/api/scores', (req, res) => {
 });
 
 app.get('/api/announcements', async (req, res) => {
-  if (!db) return res.json([]);
-  const rows = await db.all('SELECT * FROM announcements ORDER BY timestamp DESC LIMIT 1');
-  res.json(rows[0] || null);
+  res.json(announcementsDB[announcementsDB.length - 1] || null);
 });
 
 app.post('/api/broadcast', async (req, res) => {
@@ -142,7 +117,7 @@ Staff Note: "${notes}"`;
       const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleanJson);
       
-      await db.run('INSERT INTO announcements (english, spanish, french) VALUES (?, ?, ?)', [parsed.english, parsed.spanish, parsed.french]);
+      announcementsDB.push({ english: parsed.english, spanish: parsed.spanish, french: parsed.french, timestamp: new Date().toISOString() });
       return res.json({ success: true, ...parsed });
     } catch (e) {
       console.error(e);
@@ -151,14 +126,12 @@ Staff Note: "${notes}"`;
   }
 
   // Fallback
-  await db.run('INSERT INTO announcements (english, spanish, french) VALUES (?, ?, ?)', [notes, 'Aviso: ' + notes, 'Avis: ' + notes]);
+  announcementsDB.push({ english: notes, spanish: 'Aviso: ' + notes, french: 'Avis: ' + notes, timestamp: new Date().toISOString() });
   res.json({ success: true, english: notes });
 });
 
 app.delete('/api/broadcast', async (req, res) => {
-  if (!db) return res.json({ success: false });
-  // We can just clear the whole announcements table to effectively "remove" the active PA
-  await db.run('DELETE FROM announcements');
+  announcementsDB = [];
   res.json({ success: true });
 });
 
