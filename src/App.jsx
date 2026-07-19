@@ -1140,16 +1140,20 @@ const App = () => {
   const [persona, setPersona] = useState('Standard Fan');
 
   // Global Settings & Notification State
-  const [theme, setTheme] = useState('dark');
-  const [pushEnabled, setPushEnabled] = useState(true);
-  const [syncActive, setSyncActive] = useState(true);
-  
-  const initialName = localStorage.getItem('profileName');
-  const welcomeText = initialName ? `Welcome ${initialName} to StadiumGenie Live Overview.` : 'Welcome to StadiumGenie Live Overview.';
+  const [notifications, setNotifications] = useState([]);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const profileName = localStorage.getItem('profileName') || '';
 
-  const [notifications, setNotifications] = useState([
-    { id: 1, time: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}), title: 'Welcome', body: welcomeText, read: false }
-  ]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      setShowWelcome(true);
+      const text = profileName ? `Welcome ${profileName} to StadiumGenie Live Overview.` : 'Welcome to StadiumGenie Live Overview.';
+      setNotifications(prev => [{ id: Date.now(), time: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}), title: 'Welcome', body: text, read: false }, ...prev]);
+      
+      const timer = setTimeout(() => setShowWelcome(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
   // Apply Theme
   useEffect(() => {
@@ -1184,6 +1188,11 @@ const App = () => {
 
   return (
     <>
+      {showWelcome && (
+        <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: 'var(--pitch)', color: '#000', padding: '16px 32px', borderRadius: '32px', fontWeight: '900', fontSize: '18px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)', zIndex: 999999, display: 'flex', alignItems: 'center', gap: '12px', animation: 'slideDown 0.5s ease-out' }}>
+          <span>👋</span> Welcome {profileName ? profileName.split(' ')[0] : ''}!
+        </div>
+      )}
       <Topbar role={tab === 'staff' ? 'staff' : 'fan'} setRole={(r) => setTab(r === 'staff' ? 'staff' : 'live')} onLogout={() => setIsAuthenticated(false)} theme={theme} setTheme={setTheme} pushEnabled={pushEnabled} setPushEnabled={setPushEnabled} syncActive={syncActive} setSyncActive={setSyncActive} notifications={notifications} />
       <div className="wrap">
         
