@@ -64,6 +64,9 @@ StadiumGenie/
 │   ├── App.jsx             # Main Application Logic & Routing
 │   ├── index.css           # Global Styles & Theming
 │   └── main.jsx            # React Entry Point
+├── server/                 # Node.js Backend
+│   ├── server.js           # Express API and Database Logic
+│   └── database.sqlite     # SQLite Local Database
 ├── package.json            # Dependencies & Scripts
 └── vite.config.js          # Vite Configuration
 ```
@@ -80,6 +83,16 @@ Here are the major tools and technologies used to build StadiumGenie:
 ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+### Backend & Database
+
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+
+### Artificial Intelligence
+
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
+
 ---
 
 ## 📦 Installation & Setup
@@ -92,17 +105,32 @@ You can run StadiumGenie locally by following these steps:
    cd stadium-genie
    ```
 
-2. **Install dependencies:**
+2. **Install frontend and backend dependencies:**
    ```bash
    npm install
+   cd server && npm install
+   cd ..
    ```
 
-3. **Start the development server:**
+3. **Configure Environment Variables:**
+   Inside the `server/` directory, create a `.env` file (or edit the existing one) to include your Gemini API key for real-time NLP:
+   ```env
+   GEMINI_API_KEY=your_google_gemini_api_key_here
+   ```
+
+4. **Start the backend server:**
+   ```bash
+   cd server
+   node server.js
+   ```
+
+5. **Start the frontend application:**
+   (In a new terminal tab/window from the root directory)
    ```bash
    npm run dev
    ```
 
-4. **Build for production:**
+6. **Build for production:**
    ```bash
    npm run build
    ```
