@@ -244,5 +244,8 @@ app.post('/api/sos/resolve', (req, res) => {
   res.json({ success: true });
 });
 
-const PORT = 3001;
-app.listen(PORT, () => console.log(`Command Center API listening at http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3001;
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Command Center API listening at http://localhost:${PORT}`));
+}
+module.exports = app;
