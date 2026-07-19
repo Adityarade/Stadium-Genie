@@ -101,7 +101,7 @@ You can run StadiumGenie locally by following these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/stadium-genie.git
+   git clone https://github.com/Adityarade/stadium-genie.git
    cd stadium-genie
    ```
 
