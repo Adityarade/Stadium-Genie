@@ -85,6 +85,41 @@ app.get('/api/pulse', (req, res) => res.json(stadiumState.densities));
 app.get('/api/stats', (req, res) => res.json(stadiumState.stats));
 app.get('/api/transport', (req, res) => res.json(stadiumState.transport));
 
+// --- External API Integrations ---
+app.get('/api/weather', async (req, res) => {
+  try {
+    // Open-Meteo API for London Coordinates (Emirates Stadium)
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=51.5549&longitude=-0.1084&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&timezone=Europe%2FLondon';
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Weather API failed");
+    const data = await response.json();
+    res.json({
+      temp: Math.round(data.current.temperature_2m),
+      code: data.current.weather_code,
+      feelsLike: Math.round(data.current.apparent_temperature),
+      humidity: data.current.relative_humidity_2m,
+      precip: data.current.precipitation,
+      wind: data.current.wind_speed_10m
+    });
+  } catch (error) {
+    console.error("Weather fetch error:", error);
+    res.status(500).json({ temp: '--', code: 0, feelsLike: '--', humidity: '--', precip: '--', wind: '--' });
+  }
+});
+
+let matchClock = 74;
+setInterval(() => { if(matchClock < 90) matchClock++; }, 60000); // increment every minute
+
+app.get('/api/scores', (req, res) => {
+  // Mocking realistic live match data
+  res.json({
+    home: { team: 'England', score: 2, flag: 'https://flagcdn.com/w160/gb-eng.png' },
+    away: { team: 'Brazil', score: 1, flag: 'https://flagcdn.com/w160/br.png' },
+    clock: `${matchClock}'`,
+    status: 'LIVE'
+  });
+});
+
 app.get('/api/announcements', async (req, res) => {
   if (!db) return res.json([]);
   const rows = await db.all('SELECT * FROM announcements ORDER BY timestamp DESC LIMIT 1');
@@ -118,6 +153,13 @@ Staff Note: "${notes}"`;
   // Fallback
   await db.run('INSERT INTO announcements (english, spanish, french) VALUES (?, ?, ?)', [notes, 'Aviso: ' + notes, 'Avis: ' + notes]);
   res.json({ success: true, english: notes });
+});
+
+app.delete('/api/broadcast', async (req, res) => {
+  if (!db) return res.json({ success: false });
+  // We can just clear the whole announcements table to effectively "remove" the active PA
+  await db.run('DELETE FROM announcements');
+  res.json({ success: true });
 });
 
 app.post('/api/chat', async (req, res) => {

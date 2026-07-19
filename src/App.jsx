@@ -90,8 +90,8 @@ const BellIcon = () => (
 );
 
 const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive }) => (
-  <div className="auth-wrapper" style={{ zIndex: 99999, cursor: 'pointer' }} onClick={onClose}>
-    <div className="auth-card" style={{ maxWidth: '360px', padding: '32px', cursor: 'default' }} onClick={e => e.stopPropagation()}>
+  <div style={{ zIndex: 99999, cursor: 'pointer', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }} onClick={onClose}>
+    <div style={{ maxWidth: '360px', width: '100%', padding: '32px', cursor: 'default', background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', boxShadow: '0 24px 64px rgba(0,0,0,0.6)', margin: 'auto', position: 'relative' }} onClick={e => e.stopPropagation()}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h2 style={{ fontSize: '20px', margin: 0, fontFamily: 'var(--display)' }}>App Settings</h2>
         <button type="button" onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '24px' }}>&times;</button>
@@ -139,12 +139,24 @@ const Topbar = ({ role, setRole, onLogout, theme, setTheme, pushEnabled, setPush
   }, []);
 
   return (
-    <div className="topbar">
-      <div className="brand">
-        <div className="brand-mark" style={{ background: 'var(--pitch)', color: '#000' }}><LogoIcon /></div>
+    <div className="topbar" style={{
+      background: 'linear-gradient(135deg, #020617, #0f172a)',
+      position: 'relative',
+      borderBottom: '1px solid rgba(255,255,255,0.05)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      padding: '20px 32px',
+      zIndex: 10
+    }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+        <div style={{ position: 'absolute', top: '-50px', left: '-50px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%)', borderRadius: '50%' }}></div>
+        <div style={{ position: 'absolute', bottom: '-100px', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(56, 189, 248, 0.1), transparent 70%)', borderRadius: '50%' }}></div>
+      </div>
+      
+      <div className="brand" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="brand-mark" style={{ background: '#34d399', color: '#022c22', boxShadow: '0 4px 12px rgba(52, 211, 153, 0.4)' }}><LogoIcon /></div>
         <div className="brand-text">
-          <div className="kicker">FIFA World Cup 2026</div>
-          <h1>STADIUMGENIE | MATCHDAY LIVE OVERVIEW</h1>
+          <div className="kicker" style={{ color: '#38bdf8', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>FIFA World Cup 2026</div>
+          <h1 style={{ color: '#f8fafc', fontWeight: '900', letterSpacing: '-0.5px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>STADIUMGENIE | MATCHDAY LIVE OVERVIEW</h1>
         </div>
       </div>
       <div className="venue-meta">
@@ -203,7 +215,11 @@ const FanTicker = () => {
   useEffect(() => {
     const load = async () => {
       const data = await fetchAnnouncements();
-      if (data && data.english) setAnn(data);
+      if (data && data.english) {
+        setAnn(data);
+      } else {
+        setAnn(null);
+      }
     };
     load();
     const interval = setInterval(load, 5000);
@@ -224,6 +240,41 @@ const FanTicker = () => {
             {l.slice(0,2)}
           </button>
         ))}
+      </div>
+    </div>
+  );
+};
+
+const HeroSection = () => {
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, #020617, #0f172a)',
+      borderRadius: '24px',
+      padding: '48px',
+      marginBottom: '32px',
+      position: 'relative',
+      overflow: 'hidden',
+      boxShadow: '0 24px 48px rgba(0,0,0,0.4)',
+      border: '1px solid rgba(255,255,255,0.05)'
+    }}>
+      <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
+      <div style={{ position: 'absolute', bottom: '-100px', left: '-50px', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(56, 189, 248, 0.1), transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
+      
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <h1 style={{ fontSize: '56px', fontWeight: '900', margin: '0 0 16px 0', letterSpacing: '-2px', color: '#f8fafc', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+          Welcome to <span style={{ color: '#34d399' }}>StadiumGenie</span>
+        </h1>
+        <p style={{ fontSize: '20px', color: '#94a3b8', margin: '0 0 32px 0', maxWidth: '600px', lineHeight: '1.6' }}>
+          Your ultimate digital companion for the FIFA World Cup 2026. Navigate the stadium, beat the queues, and catch every live update effortlessly.
+        </p>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button style={{ padding: '16px 32px', fontSize: '16px', fontWeight: 'bold', borderRadius: '12px', background: '#34d399', color: '#022c22', border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(52, 211, 153, 0.4)' }}>
+            Explore Match Data
+          </button>
+          <button style={{ padding: '16px 32px', fontSize: '16px', fontWeight: 'bold', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>
+            Talk to AI Copilot
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -551,6 +602,137 @@ const Transport = () => {
   );
 };
 
+const WeatherWidget = () => {
+  const [weather, setWeather] = useState({ temp: '--', code: 0, feelsLike: '--', humidity: '--', precip: '--', wind: '--' });
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/weather');
+        if(res.ok) setWeather(await res.json());
+      } catch (e) {}
+    };
+    load();
+    const interval = setInterval(load, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getWeatherIcon = (code) => {
+    if (code === 0) return '☀️'; // Clear
+    if (code >= 1 && code <= 3) return '⛅'; // Partly cloudy
+    if (code >= 45 && code <= 48) return '🌫️'; // Fog
+    if (code >= 51 && code <= 67) return '🌧️'; // Rain
+    if (code >= 71 && code <= 82) return '🌨️'; // Snow
+    if (code >= 95) return '⛈️'; // Thunderstorm
+    return '🌡️';
+  };
+
+  return (
+    <div className="panel" style={{ background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(3, 105, 161, 0.1))', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: '-10px', right: '-10px', fontSize: '140px', opacity: 0.05, filter: 'blur(2px)' }}>{getWeatherIcon(weather.code)}</div>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', zIndex: 1 }}>
+        <div>
+          <span className="eyebrow" style={{ color: '#38bdf8' }}>Local Weather</span>
+          <h2 style={{ fontSize: '48px', margin: '4px 0 0 0', fontWeight: '900', textShadow: '0 2px 10px rgba(0,0,0,0.3)', letterSpacing: '-1px' }}>{weather.temp}°C</h2>
+          <p className="desc" style={{ margin: '0', fontWeight: '600', color: '#bae6fd' }}>Emirates Stadium</p>
+        </div>
+        <div style={{ fontSize: '56px', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}>{getWeatherIcon(weather.code)}</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '20px', zIndex: 1 }}>
+        <div style={{ background: 'rgba(0,0,0,0.25)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px' }}>🌡️</span>
+          <div>
+            <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Feels Like</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{weather.feelsLike}°C</div>
+          </div>
+        </div>
+        <div style={{ background: 'rgba(0,0,0,0.25)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px' }}>💧</span>
+          <div>
+            <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Humidity</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{weather.humidity}%</div>
+          </div>
+        </div>
+        <div style={{ background: 'rgba(0,0,0,0.25)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px' }}>💨</span>
+          <div>
+            <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Wind</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{weather.wind} km/h</div>
+          </div>
+        </div>
+        <div style={{ background: 'rgba(0,0,0,0.25)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px' }}>🌧️</span>
+          <div>
+            <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Precip</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{weather.precip} mm</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MatchScoreWidget = () => {
+  const [score, setScore] = useState({ home: { team: '--', score: 0, flag: '' }, away: { team: '--', score: 0, flag: '' }, clock: '--', status: '--' });
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/scores');
+        if(res.ok) setScore(await res.json());
+      } catch (e) {}
+    };
+    load();
+    const interval = setInterval(load, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="panel" style={{ background: '#0f172a', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid #1e293b', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="eyebrow" style={{ color: '#fbbf24', letterSpacing: '1px' }}>LIVE BROADCAST</span>
+        <div style={{ background: '#000', border: '1px solid #334155', color: '#ef4444', fontSize: '12px', fontWeight: '900', padding: '4px 12px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '1px' }}>
+          <span className="pulsing-dot" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', boxShadow: '0 0 10px #ef4444' }}></span>
+          {score.clock}
+        </div>
+      </div>
+      
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '24px', gap: '16px' }}>
+        {/* Home Team */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #334155', background: '#1e293b', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+            {score.home.flag.startsWith('http') ? <img src={score.home.flag} alt={score.home.team} style={{ height: '100%', objectFit: 'cover' }} /> : <span style={{fontSize: '32px'}}>{score.home.flag}</span>}
+          </div>
+          <div style={{ fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', marginTop: '12px', fontSize: '14px', color: '#f8fafc' }}>{score.home.team}</div>
+        </div>
+        
+        {/* Score Board */}
+        <div style={{ display: 'flex', alignItems: 'center', background: '#000', borderRadius: '8px', border: '1px solid #334155', overflow: 'hidden', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.8)' }}>
+          <div style={{ fontSize: '48px', fontWeight: '900', fontFamily: 'monospace', padding: '8px 24px', color: '#f8fafc', textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+            {score.home.score}
+          </div>
+          <div style={{ width: '1px', height: '40px', background: '#334155' }}></div>
+          <div style={{ fontSize: '48px', fontWeight: '900', fontFamily: 'monospace', padding: '8px 24px', color: '#f8fafc', textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+            {score.away.score}
+          </div>
+        </div>
+        
+        {/* Away Team */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', overflow: 'hidden', border: '3px solid #334155', background: '#1e293b', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+            {score.away.flag.startsWith('http') ? <img src={score.away.flag} alt={score.away.team} style={{ height: '100%', objectFit: 'cover' }} /> : <span style={{fontSize: '32px'}}>{score.away.flag}</span>}
+          </div>
+          <div style={{ fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px', marginTop: '12px', fontSize: '14px', color: '#f8fafc' }}>{score.away.team}</div>
+        </div>
+      </div>
+      
+      <div style={{ background: '#1e293b', margin: '24px -24px -24px -24px', padding: '12px', textAlign: 'center', borderTop: '1px solid #334155', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px', fontSize: '12px', fontWeight: 'bold', color: '#94a3b8', letterSpacing: '1px', textTransform: 'uppercase' }}>
+        FIFA World Cup 2026
+      </div>
+    </div>
+  );
+};
+
 const StaffStats = () => {
   const [stats, setStats] = useState({ occ: '--', rate: '--', qAvg: '--', qLanes: '--', medOpen: '--', medEta: '--' });
   useEffect(() => {
@@ -605,6 +787,16 @@ const BroadcastCenter = () => {
     }
   };
 
+  const clearBroadcast = async () => {
+    setStatus('Clearing active PA...');
+    try {
+      await fetch('/api/broadcast', { method: 'DELETE' });
+      setStatus('Active PA cleared.');
+    } catch (e) {
+      setStatus('Failed to clear PA.');
+    }
+  };
+
   return (
     <div className="panel" style={{ gridColumn: 'span 2' }}>
       <span className="eyebrow">Global Broadcast System</span>
@@ -613,6 +805,7 @@ const BroadcastCenter = () => {
       <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
         <input style={{ flex: 1, padding: '12px', background: 'var(--bg)', border: '1px solid var(--line)', color: '#fff', borderRadius: '8px' }} type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g., Severe lightning near venue, seek shelter in concourse..." />
         <button className="btn" onClick={handleBroadcast}>Broadcast Live</button>
+        <button className="btn" style={{ background: '#ef4444', color: '#fff' }} onClick={clearBroadcast}>Clear Active PA</button>
       </div>
       {status && <div style={{ marginTop: '12px', color: 'var(--pitch)' }}>{status}</div>}
     </div>
@@ -753,9 +946,24 @@ const SOSButton = () => {
 
 const StaffSOSDashboard = () => {
   const [alerts, setAlerts] = useState([]);
+  const isInitialLoad = useRef(true);
+  const prevCount = useRef(0);
 
   useEffect(() => {
-    const load = async () => setAlerts(await fetchSos());
+    const load = async () => {
+      const newAlerts = await fetchSos();
+      
+      // Play a siren/beep sound if a new alert arrives after initial load
+      if (!isInitialLoad.current && newAlerts.length > prevCount.current) {
+        // A sharp alert beep
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.log('Audio blocked by browser:', e));
+      }
+      
+      prevCount.current = newAlerts.length;
+      setAlerts(newAlerts);
+      isInitialLoad.current = false;
+    };
     load();
     const interval = setInterval(load, 2000);
     return () => clearInterval(interval);
@@ -980,6 +1188,10 @@ const App = () => {
             <div className="grid2" style={{ marginTop: '24px' }}>
               <Transport />
               <AccessPlanner />
+            </div>
+            <div className="grid2" style={{ marginTop: '24px' }}>
+              <MatchScoreWidget />
+              <WeatherWidget />
             </div>
           </div>
 
