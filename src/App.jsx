@@ -90,10 +90,14 @@ const BellIcon = () => (
 const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive, onProfileChange }) => {
   const [name, setName] = useState(localStorage.getItem('profileName') || '');
   const [email, setEmail] = useState(localStorage.getItem('profileEmail') || '');
+  const [age, setAge] = useState(localStorage.getItem('profileAge') || '');
+  const [contact, setContact] = useState(localStorage.getItem('profileContact') || '');
 
   const handleSaveProfile = () => {
     localStorage.setItem('profileName', name);
     localStorage.setItem('profileEmail', email);
+    localStorage.setItem('profileAge', age);
+    localStorage.setItem('profileContact', contact);
     if (onProfileChange) onProfileChange(name);
     alert('Profile saved successfully!');
   };
@@ -109,7 +113,9 @@ const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPus
         <div className="auth-divider" style={{ margin: '16px 0 24px 0' }}><span>USER PROFILE</span></div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
           <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
+          <input type="number" placeholder="Age" value={age} onChange={e => setAge(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
           <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
+          <input type="tel" placeholder="Contact No" value={contact} onChange={e => setContact(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
           <button onClick={handleSaveProfile} style={{ padding: '10px', background: 'var(--pitch)', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Save Profile</button>
         </div>
         
@@ -1137,8 +1143,12 @@ const App = () => {
   const [theme, setTheme] = useState('dark');
   const [pushEnabled, setPushEnabled] = useState(true);
   const [syncActive, setSyncActive] = useState(true);
+  
+  const initialName = localStorage.getItem('profileName');
+  const welcomeText = initialName ? `Welcome ${initialName} to StadiumGenie Live Overview.` : 'Welcome to StadiumGenie Live Overview.';
+
   const [notifications, setNotifications] = useState([
-    { id: 1, time: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}), title: 'Welcome', body: 'Welcome to StadiumGenie Live Overview.', read: false }
+    { id: 1, time: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}), title: 'Welcome', body: welcomeText, read: false }
   ]);
 
   // Apply Theme
