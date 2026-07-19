@@ -11,7 +11,7 @@ app.use(express.json());
 let db;
 (async () => {
   db = await open({
-    filename: './database.sqlite',
+    filename: process.env.NODE_ENV === 'production' ? '/tmp/database.sqlite' : './database.sqlite',
     driver: sqlite3.Database
   });
   await db.exec(`
