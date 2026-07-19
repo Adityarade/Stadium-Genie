@@ -87,41 +87,60 @@ const BellIcon = () => (
   </svg>
 );
 
-const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive }) => (
-  <div style={{ zIndex: 99999, cursor: 'pointer', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }} onClick={onClose}>
-    <div style={{ maxWidth: '360px', width: '100%', padding: '32px', cursor: 'default', background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', boxShadow: '0 24px 64px rgba(0,0,0,0.6)', margin: 'auto', position: 'relative' }} onClick={e => e.stopPropagation()}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '20px', margin: 0, fontFamily: 'var(--display)' }}>App Settings</h2>
-        <button type="button" onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '24px' }}>&times;</button>
+const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive }) => {
+  const [name, setName] = useState(localStorage.getItem('profileName') || '');
+  const [email, setEmail] = useState(localStorage.getItem('profileEmail') || '');
+
+  const handleSaveProfile = () => {
+    localStorage.setItem('profileName', name);
+    localStorage.setItem('profileEmail', email);
+    alert('Profile saved successfully!');
+  };
+
+  return (
+    <div style={{ zIndex: 99999, cursor: 'pointer', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }} onClick={onClose}>
+      <div style={{ maxWidth: '380px', width: '100%', padding: '32px', cursor: 'default', background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', boxShadow: '0 24px 64px rgba(0,0,0,0.6)', margin: 'auto', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '20px', margin: 0, fontFamily: 'var(--display)' }}>App Settings</h2>
+          <button type="button" onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '24px' }}>&times;</button>
+        </div>
+
+        <div className="auth-divider" style={{ margin: '16px 0 24px 0' }}><span>USER PROFILE</span></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+          <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
+          <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--line)', color: '#f8fafc', borderRadius: '8px' }} />
+          <button onClick={handleSaveProfile} style={{ padding: '10px', background: 'var(--pitch)', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Save Profile</button>
+        </div>
+        
+        <div className="auth-divider" style={{ margin: '24px 0' }}><span>PREFERENCES</span></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Theme Mode</span>
+            <button style={{ background: 'transparent', border: '1px solid var(--line)', color: 'var(--pitch)', fontWeight: 'bold', padding: '4px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+              {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+            </button>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Push Notifications</span>
+            <input type="checkbox" checked={pushEnabled} onChange={e => setPushEnabled(e.target.checked)} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Data Sync</span>
+            <button style={{ background: syncActive ? 'var(--pitch)' : 'var(--bg)', color: syncActive ? '#000' : 'var(--muted)', border: 'none', padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => setSyncActive(!syncActive)}>
+              {syncActive ? 'Active' : 'Paused'}
+            </button>
+          </div>
+        </div>
+        
+        <div className="auth-divider" style={{ margin: '24px 0' }}><span>ACCOUNT</span></div>
+        
+        <button className="btn" style={{ width: '100%', background: 'var(--bg-panel-raised)', color: 'var(--red)', border: '1px solid rgba(255,51,51,0.2)' }} onClick={onLogout}>
+          Sign Out
+        </button>
       </div>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Theme Mode</span>
-          <button style={{ background: 'transparent', border: '1px solid var(--line)', color: 'var(--pitch)', fontWeight: 'bold', padding: '4px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-          </button>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Push Notifications</span>
-          <input type="checkbox" checked={pushEnabled} onChange={e => setPushEnabled(e.target.checked)} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '14px', color: 'var(--muted)' }}>Data Sync</span>
-          <button style={{ background: syncActive ? 'var(--pitch)' : 'var(--bg)', color: syncActive ? '#000' : 'var(--muted)', border: 'none', padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => setSyncActive(!syncActive)}>
-            {syncActive ? 'Active' : 'Paused'}
-          </button>
-        </div>
-      </div>
-      
-      <div className="auth-divider" style={{ margin: '24px 0' }}><span>ACCOUNT</span></div>
-      
-      <button className="btn" style={{ width: '100%', background: 'var(--bg-panel-raised)', color: 'var(--red)', border: '1px solid rgba(255,51,51,0.2)' }} onClick={onLogout}>
-        Sign Out
-      </button>
     </div>
-  </div>
-);
+  );
+};
 
 const Topbar = ({ role, setRole, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive, notifications }) => {
   const [time, setTime] = useState('--:--:--');
