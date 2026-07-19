@@ -57,12 +57,10 @@ const askClaude = async (systemPrompt, userPrompt, persona) => {
 // --- COMPONENTS ---
 
 const LogoIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 14 C 2 6, 22 6, 22 14" />
-    <rect x="2" y="14" width="20" height="6" rx="1" />
-    <line x1="7" y1="14" x2="7" y2="20" />
-    <line x1="12" y1="14" x2="12" y2="20" />
-    <line x1="17" y1="14" x2="17" y2="20" />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <ellipse cx="12" cy="17" rx="10" ry="4" />
+    <ellipse cx="12" cy="17" rx="5" ry="1.5" strokeOpacity="0.5" />
+    <path d="M14 2L6 11h6l-1 6 9-10h-6l1-5z" fill="currentColor" stroke="none" />
   </svg>
 );
 
