@@ -87,13 +87,14 @@ const BellIcon = () => (
   </svg>
 );
 
-const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive }) => {
+const SettingsModal = ({ onClose, onLogout, theme, setTheme, pushEnabled, setPushEnabled, syncActive, setSyncActive, onProfileChange }) => {
   const [name, setName] = useState(localStorage.getItem('profileName') || '');
   const [email, setEmail] = useState(localStorage.getItem('profileEmail') || '');
 
   const handleSaveProfile = () => {
     localStorage.setItem('profileName', name);
     localStorage.setItem('profileEmail', email);
+    if (onProfileChange) onProfileChange(name);
     alert('Profile saved successfully!');
   };
 
@@ -146,6 +147,7 @@ const Topbar = ({ role, setRole, onLogout, theme, setTheme, pushEnabled, setPush
   const [time, setTime] = useState('--:--:--');
   const [showSettings, setShowSettings] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [profileName, setProfileName] = useState(localStorage.getItem('profileName') || '');
   const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
@@ -192,6 +194,13 @@ const Topbar = ({ role, setRole, onLogout, theme, setTheme, pushEnabled, setPush
             <BellIcon />
             {unreadCount > 0 && <span className="notif-badge"></span>}
           </button>
+          
+          {profileName && (
+            <span style={{ color: 'var(--pitch)', fontWeight: 'bold', marginLeft: '4px', marginRight: '4px', fontSize: '14px' }}>
+              Hi, {profileName.split(' ')[0]}
+            </span>
+          )}
+
           <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '8px', display: 'flex', alignItems: 'center' }} onClick={() => setShowSettings(true)}>
             <SettingsIcon />
           </button>
@@ -220,7 +229,7 @@ const Topbar = ({ role, setRole, onLogout, theme, setTheme, pushEnabled, setPush
         </div>
       )}
 
-      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} onLogout={onLogout} theme={theme} setTheme={setTheme} pushEnabled={pushEnabled} setPushEnabled={setPushEnabled} syncActive={syncActive} setSyncActive={setSyncActive} />}
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} onLogout={onLogout} theme={theme} setTheme={setTheme} pushEnabled={pushEnabled} setPushEnabled={setPushEnabled} syncActive={syncActive} setSyncActive={setSyncActive} onProfileChange={setProfileName} />}
     </div>
   );
 };
